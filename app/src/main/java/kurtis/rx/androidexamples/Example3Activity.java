@@ -12,11 +12,16 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import rx.Single;
-import rx.SingleSubscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
+/**
+ * Single是一个Observable的变种.订阅者只有两个方法
+ * onSuccess - Single发射单个的值到这个方法
+ * onError - 如果无法发射需要的值
+ */
 public class Example3Activity extends AppCompatActivity {
 
     private Subscription mTvShowSubscription;
@@ -25,6 +30,7 @@ public class Example3Activity extends AppCompatActivity {
     private TextView mErrorMessage;
     private SimpleStringAdapter mSimpleStringAdapter;
     private RestClient mRestClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,20 +53,27 @@ public class Example3Activity extends AppCompatActivity {
             }
         });
 
+        //将注释打开，换一个subscribe也是可以的
         mTvShowSubscription = tvShowSingle
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleSubscriber<List<String>>() {
-                    @Override
-                    public void onSuccess(List<String> tvShows) {
-                        displayTvShows(tvShows);
-                    }
-
-                    @Override
-                    public void onError(Throwable error) {
-                        displayErrorMessage();
-                    }
-                });
+//                .subscribe(new SingleSubscriber<List<String>>() {
+//                    @Override
+//                    public void onSuccess(List<String> tvShows) {
+//                        displayTvShows(tvShows);
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable error) {
+//                        displayErrorMessage();
+//                    }
+//                });
+        .subscribe(new Action1<List<String>>() {
+            @Override
+            public void call(List<String> tvShows) {
+                displayTvShows(tvShows);
+            }
+        });
     }
 
     @Override

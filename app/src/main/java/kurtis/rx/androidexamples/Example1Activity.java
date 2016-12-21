@@ -5,12 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
 import rx.Observer;
+import rx.functions.Action1;
 
 public class Example1Activity extends AppCompatActivity {
 
@@ -24,9 +26,27 @@ public class Example1Activity extends AppCompatActivity {
         createObservable();
     }
 
+    private Action1<String> mToastAction = new Action1<String>() {
+        @Override public void call(String s) {
+            Toast.makeText(Example1Activity.this, s, Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private Action1<List<String>> mTextViewAction = new Action1<List<String>>() {
+        @Override public void call(List<String> list) {
+            for(String s:list){
+                Toast.makeText(Example1Activity.this, s, Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    };
+
+
+    //打开注释的1,2两个地方，就是异步调用
     private void createObservable() {
         Observable<List<String>> listObservable = Observable.just(getColorList());
-        //.subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread())
+        // 1.subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread())
+        listObservable.subscribe(mTextViewAction);
         listObservable.subscribe(new Observer<List<String>>() {
 
             @Override
@@ -41,7 +61,7 @@ public class Example1Activity extends AppCompatActivity {
 
             @Override
             public void onNext(List<String> colors) {
-//                try{
+// 2               try{
 //                    Log.d("Example1Activity onNext","开始了");
 //                Thread.sleep(5000);}catch(Exception e){
 //                    Log.d("Example1Activity onNext",e.getLocalizedMessage());

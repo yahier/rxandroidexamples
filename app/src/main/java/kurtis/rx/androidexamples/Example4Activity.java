@@ -1,7 +1,6 @@
 package kurtis.rx.androidexamples;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +9,17 @@ import android.widget.TextView;
 import rx.Observer;
 import rx.subjects.PublishSubject;
 
+/**
+ * Subject
+
+ Subject这个对象既是Observable又是Observer，我会把Subject想象成一个管道：从一端把数据注入，结果就会从另一端输出。
+ 因为它是一个Observer，它可以订阅一个或多个Observable；
+ 又因为它是一个Observable，它可以转发它收到(Observe)的数据，也可以发射新的数据。
+
+ Subject的种类
+
+ 一共有四种类型的Subject,分别为AsyncSubject、BehaviorSubject、PublishSubject和ReplaySubject。
+ */
 public class Example4Activity extends AppCompatActivity {
 
     private TextView mCounterDisplay;

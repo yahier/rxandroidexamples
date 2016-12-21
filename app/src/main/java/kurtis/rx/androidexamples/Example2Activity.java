@@ -8,11 +8,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -31,8 +33,58 @@ public class Example2Activity extends AppCompatActivity {
         mRestClient = new RestClient(this);
         configureLayout();
         createObservable();
+        test1();
     }
 
+
+    void test1() {
+        fetchObservable()
+                .subscribeOn(Schedulers.io())
+                //will process everything in a new thread
+                .observeOn(AndroidSchedulers.mainThread())
+                //will listen the results on the main thread
+                .subscribe(new Subscriber<List<String>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(List<String> list) {
+                        Log.e("test1", list.get(0));
+                    }
+                });
+    }
+
+    public Observable<List<String>> fetchObservable() {
+        return Observable.create(new Observable.OnSubscribe<List<String>>() {
+            @Override
+            public void call(Subscriber<? super List<String>> subscriber) {
+                // Fetch information from database
+                subscriber.onNext(getUserList());
+
+                subscriber.onCompleted();
+            }
+        });
+    }
+
+    List<String> getUserList() {
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+
+        }
+        List<String> list = new ArrayList<String>();
+        list.add("hello ya");
+        return list;
+    }
+
+
+    //test2
     private void createObservable() {
         Observable<List<String>> tvShowObservable = Observable.fromCallable(new Callable<List<String>>() {
             @Override
@@ -41,7 +93,8 @@ public class Example2Activity extends AppCompatActivity {
             }
         });
 
-        Log.e("Example2Activity","createObservable开始");
+
+        Log.e("Example2Activity", "createObservable开始");
         mTvShowSubscription = tvShowObservable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
