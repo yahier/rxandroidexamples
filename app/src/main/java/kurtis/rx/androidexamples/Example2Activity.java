@@ -39,8 +39,9 @@ public class Example2Activity extends AppCompatActivity {
 
     void test1() {
         fetchObservable()
+                // 指定 subscribe() 发生在 IO 线程
                 .subscribeOn(Schedulers.io())
-                //will process everything in a new thread
+                // 指定 Subscriber 的回调发生在主线程
                 .observeOn(AndroidSchedulers.mainThread())
                 //will listen the results on the main thread
                 .subscribe(new Subscriber<List<String>>() {
@@ -48,6 +49,8 @@ public class Example2Activity extends AppCompatActivity {
                     public void onCompleted() {
 
                     }
+
+                    //有更多接口可以复写喔
 
                     @Override
                     public void onError(Throwable e) {
