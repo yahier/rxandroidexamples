@@ -12,7 +12,11 @@ import java.util.List;
 
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class Example1Activity extends AppCompatActivity {
 
@@ -27,14 +31,16 @@ public class Example1Activity extends AppCompatActivity {
     }
 
     private Action1<String> mToastAction = new Action1<String>() {
-        @Override public void call(String s) {
+        @Override
+        public void call(String s) {
             Toast.makeText(Example1Activity.this, s, Toast.LENGTH_SHORT).show();
         }
     };
 
     private Action1<List<String>> mTextViewAction = new Action1<List<String>>() {
-        @Override public void call(List<String> list) {
-            for(String s:list){
+        @Override
+        public void call(List<String> list) {
+            for (String s : list) {
                 Toast.makeText(Example1Activity.this, s, Toast.LENGTH_SHORT).show();
             }
 
@@ -47,11 +53,11 @@ public class Example1Activity extends AppCompatActivity {
         Observable<List<String>> listObservable = Observable.just(getColorList());
         // 1.subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread())
         listObservable.subscribe(mTextViewAction);
-        listObservable.subscribe(new Observer<List<String>>() {
+        listObservable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<List<String>>() {
 
             @Override
             public void onCompleted() {
-                Log.d("Example1Activity","onCompleted");
+                Log.e("Example1Activity", "createObservable onCompleted");
             }
 
             @Override
@@ -61,13 +67,51 @@ public class Example1Activity extends AppCompatActivity {
 
             @Override
             public void onNext(List<String> colors) {
-// 2               try{
-//                    Log.d("Example1Activity onNext","开始了");
-//                Thread.sleep(5000);}catch(Exception e){
-//                    Log.d("Example1Activity onNext",e.getLocalizedMessage());
+//                try {
+//                    Log.d("Example1Activity onNext", "开始了");
+//                    Thread.sleep(5000);
+//                } catch (Exception e) {
+//                    Log.d("Example1Activity onNext", e.getLocalizedMessage());
 //                }
                 mSimpleStringAdapter.setStrings(colors);
-                Log.d("Example1Activity onNext","size: "+colors.size());
+                Log.e("Example1Activity onNext", "size: " + colors.size());
+            }
+        });
+
+//        listObservable.subscribe(new Action1<List<String>>() {
+//            @Override
+//            public void call(List<String> strings) {
+//                Log.e("createObservable", "Action1:" + strings.get(0));
+//                mSimpleStringAdapter.setStrings(strings);
+//            }
+//        });
+//
+//        listObservable.doOnCompleted(new Action0() {
+//            @Override
+//            public void call() {
+//
+//            }
+//        });
+//
+        listObservable.subscribe(new Subscriber<List<String>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(List<String> strings) {
+
+            }
+
+            @Override
+            public void onStart() {
+                super.onStart();
             }
         });
 

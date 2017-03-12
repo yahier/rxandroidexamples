@@ -20,6 +20,9 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
+/**
+ * 继续演示 PublishSubject
+ */
 public class Example6Activity extends AppCompatActivity {
 
     private RestClient mRestClient;
